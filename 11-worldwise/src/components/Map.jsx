@@ -1,20 +1,18 @@
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styles from "./Map.module.css";
 import flagEmojiToPng from "../utils/flagEmojiToPng";
 import { MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents } from "react-leaflet";
 import { useEffect, useState } from "react";
 import { useCities } from "../contexts/CitiesContext";
 import { useGeolocation } from "../hooks/useGeolocation";
+import useUrlPosition from "../hooks/useUrlPosition";
 import Button from "./Button";
 
 function Map() {
     const { cities } = useCities();
     const [mapPosition, setMapPosition] = useState([40, 0]);
-    const [searchParams] = useSearchParams();
     const { isLoading: isLoadingPosition, position: geoLocationPosition, getPosition } = useGeolocation();
-
-    const mapLat = searchParams.get("lat");
-    const mapLng = searchParams.get("lng");
+    const [mapLat, mapLng] = useUrlPosition();
 
     useEffect(
         function () {
@@ -32,7 +30,7 @@ function Map() {
                     {isLoadingPosition ? "Loading..." : "Use your position"}
                 </Button>
             )}
-            <MapContainer center={mapPosition} zoom={8} scrollWheelZoom={true} className={styles.map}>
+            <MapContainer center={mapPosition} zoom={18} scrollWheelZoom={true} className={styles.map}>
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
